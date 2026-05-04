@@ -11,36 +11,36 @@ export const PRESET_SCENARIOS: PresetScenario[] = [
     name: "Normal Friendly Chat",
     description: "A typical helpful conversation between users.",
     messages: [
-      { id: "p1-1", text: "Hey! Can you help me with the documentation?", sender: "User A", timestamp: new Date() },
-      { id: "p1-2", text: "Sure! What specifically do you need?", sender: "User B", timestamp: new Date() },
-      { id: "p1-3", text: "I'm looking for the API authentication section.", sender: "User A", timestamp: new Date() }
+      { id: "p1-1", text: "Hey! Can you help me with the documentation?", sender: "User A", isUser: true, timestamp: new Date() },
+      { id: "p1-2", text: "Sure! What specifically do you need?", sender: "User B", isUser: false, timestamp: new Date() },
+      { id: "p1-3", text: "I'm looking for the API authentication section.", sender: "User A", isUser: true, timestamp: new Date() }
     ]
   },
   {
     name: "Toxic Conflict",
     description: "A conversation that escalates into harassment.",
     messages: [
-      { id: "p2-1", text: "I don't think your idea will work.", sender: "User A", timestamp: new Date() },
-      { id: "p2-2", text: "Well, your ideas are always trash anyway.", sender: "User B", timestamp: new Date() },
-      { id: "p2-3", text: "You are such an idiot, stop talking to me!", sender: "User A", timestamp: new Date() }
+      { id: "p2-1", text: "I don't think your idea will work.", sender: "User A", isUser: true, timestamp: new Date() },
+      { id: "p2-2", text: "Well, your ideas are always trash anyway.", sender: "User B", isUser: false, timestamp: new Date() },
+      { id: "p2-3", text: "You are such an idiot, stop talking to me!", sender: "User A", isUser: true, timestamp: new Date() }
     ]
   },
   {
     name: "Scam Attempt",
     description: "A user attempting to steal sensitive information.",
     messages: [
-      { id: "p3-1", text: "Hello, I am from the security team.", sender: "User B", timestamp: new Date() },
-      { id: "p3-2", text: "We noticed a suspicious login on your account.", sender: "User B", timestamp: new Date() },
-      { id: "p3-3", text: "Please send your bank password and security code to verify.", sender: "User B", timestamp: new Date() }
+      { id: "p3-1", text: "Hello, I am from the security team.", sender: "User B", isUser: false, timestamp: new Date() },
+      { id: "p3-2", text: "We noticed a suspicious login on your account.", sender: "User B", isUser: false, timestamp: new Date() },
+      { id: "p3-3", text: "Please send your bank password and security code to verify.", sender: "User B", isUser: false, timestamp: new Date() }
     ]
   },
   {
     name: "Spam Bot",
     description: "A bot flooding the chat with promotional content.",
     messages: [
-      { id: "p4-1", text: "CONGRATULATIONS! You are our lucky winner!", sender: "User B", timestamp: new Date() },
-      { id: "p4-2", text: "Claim your free money and prize now at www.scam-link.com!", sender: "User B", timestamp: new Date() },
-      { id: "p4-3", text: "Limited time offer! Unilimited crypto investment returns!", sender: "User B", timestamp: new Date() }
+      { id: "p4-1", text: "CONGRATULATIONS! You are our lucky winner!", sender: "User B", isUser: false, timestamp: new Date() },
+      { id: "p4-2", text: "Claim your free money and prize now at www.scam-link.com!", sender: "User B", isUser: false, timestamp: new Date() },
+      { id: "p4-3", text: "Limited time offer! Unilimited crypto investment returns!", sender: "User B", isUser: false, timestamp: new Date() }
     ]
   }
 ];
