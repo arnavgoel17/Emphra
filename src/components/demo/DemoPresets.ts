@@ -1,4 +1,4 @@
-import { Message } from "./MockApiEngine";
+import { Message } from "@/types";
 
 export interface PresetScenario {
   name: string;

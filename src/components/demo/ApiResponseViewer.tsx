@@ -3,7 +3,7 @@
 import React, { useState } from "react";
 import { Copy, Check, Terminal } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { ApiResponse } from "./MockApiEngine";
+import { ApiResponse } from "@/types";
 
 interface ApiResponseViewerProps {
   response: ApiResponse | null;
