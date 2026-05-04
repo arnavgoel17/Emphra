@@ -46,7 +46,9 @@ export function EmphraPlayground() {
   const [perspectiveScores, setPerspectiveScores] = useState({
     toxicity: 0,
     insult: 0,
-    threat: 0
+    threat: 0,
+    profanity: 0,
+    identity_attack: 0
   });
   
   // Safety Interstitial State
@@ -126,7 +128,7 @@ export function EmphraPlayground() {
       } catch (error) {
         console.error("Moderation Error:", error);
         toast.error("Perspective API unavailable, using local moderation.");
-        const fallback = buildApiResponse([...messages, { id: "temp", text, sender, timestamp: new Date() }], settings);
+        const fallback = buildApiResponse([...messages, { id: "temp", text, sender, timestamp: new Date(), isUser: sender === "User A" }], settings);
         if (fallback.toxicity > 30 && settings.toxicityDetection) {
           setPendingMessage(text);
           setSafetySuggestion(fallback.suggestion || "Let's keep the conversation respectful.");
@@ -142,7 +144,8 @@ export function EmphraPlayground() {
       text,
       sender,
       timestamp: new Date(),
-      flagged: isMessageFlagged
+      flagged: isMessageFlagged,
+      isUser: sender === "User A"
     };
     
     const updatedMessages = [...messages, newMessage];
@@ -191,7 +194,8 @@ export function EmphraPlayground() {
           id: Math.random().toString(36).substring(7),
           text: botData.reply || "I'm here to help!",
           sender: "Moderator Bot",
-          timestamp: new Date()
+          timestamp: new Date(),
+          isUser: false
         };
         setMessages(prev => [...prev, botMsg]);
       } catch (e) {
@@ -201,7 +205,8 @@ export function EmphraPlayground() {
           id: Math.random().toString(36).substring(7),
           text: "I am having trouble connecting to my AI core right now.",
           sender: "Moderator Bot",
-          timestamp: new Date()
+          timestamp: new Date(),
+          isUser: false
         };
         setMessages(prev => [...prev, botMsg]);
       } finally {

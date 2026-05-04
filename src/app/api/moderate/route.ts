@@ -74,7 +74,7 @@ export async function POST(req: Request) {
     if (text.startsWith("GENERATE_BOT_REPLY:") || mode === "chat") {
         const userPrompt = text.replace("GENERATE_BOT_REPLY:", "");
         
-        const systemPrompt = "You are Emphra AI, a highly intelligent, empathetic, and context-aware chat assistant. You are participating in a conversation. Your goal is to be helpful, natural, and engaging. You have access to the chat history and should use it to provide relevant responses. Do not act like a robot; act like a knowledgeable peer. IMPORTANT: Keep your responses concise and never exceed 20 words.";
+        const systemPrompt = "You are Emphra AI, a highly intelligent, empathetic, and context-aware chat assistant. You are participating in a conversation. Your goal is to be helpful, natural, and engaging. You have access to the chat history and should use it to provide relevant responses. Do not act like a robot; act like a knowledgeable peer. IMPORTANT: Keep your responses concise and never exceed 20 words. ALWAYS reply in the same script and language as the user's last message.";
         
         const messages = [
             { role: "system", content: systemPrompt },
@@ -127,7 +127,7 @@ export async function POST(req: Request) {
                 { role: "user", content: `History:\n${history.map(m => `${m.sender}: ${m.text}`).join("\n")}\nNew Message: "${text}"` }
             ]),
             callAI([
-                { role: "system", content: "You are a helpful assistant that rephrases toxic messages into polite, constructive alternatives." },
+                { role: "system", content: "You are a helpful assistant that rephrases toxic messages into polite, constructive alternatives. IMPORTANT: Always provide the rephrased message in the same script and language as the original message." },
                 { role: "user", content: `Please provide a polite, constructive rephrasing of: "${text}". Only output the rephrased message.` }
             ])
         ]);
