@@ -3,6 +3,7 @@ import { SocialProof } from "@/components/SocialProof";
 import { Features } from "@/components/Features";
 import { Architecture } from "@/components/Architecture";
 import { Metrics } from "@/components/Metrics";
+import { PlaygroundCTA } from "@/components/PlaygroundCTA";
 import { ApiDocs } from "@/components/ApiDocs";
 import { Pricing } from "@/components/Pricing";
 import { Testimonials } from "@/components/Testimonials";
@@ -17,6 +18,7 @@ export default function Home() {
       <Features />
       <Architecture />
       <Metrics />
+      <PlaygroundCTA />
       <ApiDocs />
       <Pricing />
       <Testimonials />
