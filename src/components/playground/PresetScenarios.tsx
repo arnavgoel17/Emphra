@@ -90,7 +90,7 @@ const SCENARIOS: PresetScenario[] = [
     description: "Buying and selling",
     messages: [
       { text: "Is this item still available?", role: "user", sender: "Buyer", isUser: true },
-      { text: "Yes! It's $200, firm price.", role: "user", seller: "Seller", isUser: true },
+      { text: "Yes! It's $200, firm price.", role: "user", sender: "Seller", isUser: true },
       { text: "Would you accept $150?", role: "user", sender: "Buyer", isUser: true },
       { text: "Meet me at $175 and we have a deal.", role: "user", sender: "Seller", isUser: true },
     ],
