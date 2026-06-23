@@ -3,124 +3,122 @@
 import React, { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, ChevronRight, Zap } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Menu, X } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { toast } from "sonner";
 
 const navLinks = [
-  { name: "Product", href: "/#product" },
-  { name: "Demo", href: "/demo" },
-  { name: "Pricing", href: "/#pricing", comingSoon: true },
-  { name: "Docs", href: "/#docs", comingSoon: true },
+  { name: "Product", href: "#product" },
+  { name: "Solutions", href: "#solutions" },
+  { name: "Pricing", href: "#pricing" },
+  { name: "Documentation", href: "#docs" },
+  { name: "Company", href: "#company" },
 ];
 
 export function Navbar() {
   const [isScrolled, setIsScrolled] = useState(false);
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
-
-  const handleLinkClick = (e: React.MouseEvent, link: typeof navLinks[0]) => {
-    if (link.comingSoon) {
-      e.preventDefault();
-      toast.info(`${link.name} is coming soon!`);
-    }
-  };
-
-  const handleApiAccess = () => {
-    toast.info("API Access registration is coming soon!");
-  };
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
 
   useEffect(() => {
-    const handleScroll = () => {
-      setIsScrolled(window.scrollY > 20);
-    };
-    window.addEventListener("scroll", handleScroll);
+    const handleScroll = () => setIsScrolled(window.scrollY > 20);
+    window.addEventListener("scroll", handleScroll, { passive: true });
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
   return (
-    <nav
-      className={cn(
-        "fixed top-0 left-0 right-0 z-50 transition-all duration-300 border-b",
-        isScrolled 
-          ? "bg-background/80 backdrop-blur-md border-white/10 py-3" 
-          : "bg-transparent border-transparent py-5"
-      )}
-    >
-      <div className="container mx-auto px-6 flex items-center justify-between">
-        <Link href="/" className="flex items-center space-x-2 group">
-          <div className="w-10 h-10 bg-primary rounded-xl flex items-center justify-center glow-sm group-hover:glow-md transition-all duration-300">
-            <Zap className="text-primary-foreground fill-current" size={24} />
-          </div>
-          <span className="text-2xl font-bold tracking-tighter text-white">
-            EMPHRA
-          </span>
-        </Link>
+    <>
+      <motion.header
+        initial={{ y: -20, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, ease: [0.16, 1, 0.3, 1] }}
+        className={cn(
+          "fixed top-4 left-1/2 -translate-x-1/2 z-50 w-[calc(100%-2rem)] max-w-6xl transition-all duration-500 rounded-2xl",
+          isScrolled
+            ? "glass-strong shadow-2xl shadow-black/20"
+            : "bg-transparent"
+        )}
+      >
+        <div className="px-6 py-3 flex items-center justify-between">
+          <Link href="/" className="flex items-center space-x-3 group">
+            <span className="text-xl font-bold tracking-tighter text-foreground font-[family-name:var(--font-heading)]">
+              EMPHRA
+            </span>
+          </Link>
 
-        {/* Desktop Links */}
-        <div className="hidden md:flex items-center space-x-8">
-          {navLinks.map((link) => (
-            <Link
-              key={link.name}
-              href={link.href}
-              onClick={(e) => handleLinkClick(e, link)}
-              className="text-sm font-medium text-muted-foreground hover:text-white transition-colors"
-            >
-              {link.name}
-            </Link>
-          ))}
-          <Button 
-            onClick={handleApiAccess}
-            className="bg-white text-black hover:bg-white/90 rounded-full px-6 font-semibold group"
-          >
-            Get API Access
-            <ChevronRight className="ml-1 w-4 h-4 group-hover:translate-x-1 transition-transform" />
-          </Button>
-        </div>
-
-        {/* Mobile Menu Toggle */}
-        <button
-          className="md:hidden text-white"
-          onClick={() => setIsMobileMenuOpen(!isMobileMenuOpen)}
-        >
-          {isMobileMenuOpen ? <X size={28} /> : <Menu size={28} />}
-        </button>
-      </div>
-
-      {/* Mobile Menu */}
-      <AnimatePresence>
-        {isMobileMenuOpen && (
-          <motion.div
-            initial={{ opacity: 0, y: -20 }}
-            animate={{ opacity: 1, y: 0 }}
-            exit={{ opacity: 0, y: -20 }}
-            className="absolute top-full left-0 right-0 bg-background border-b border-white/10 p-6 md:hidden flex flex-col space-y-4"
-          >
+          <nav className="hidden md:flex items-center space-x-1">
             {navLinks.map((link) => (
               <Link
                 key={link.name}
                 href={link.href}
-                className="text-lg font-medium text-muted-foreground hover:text-white transition-colors"
-                onClick={(e) => {
-                    handleLinkClick(e, link);
-                    if (!link.comingSoon) setIsMobileMenuOpen(false);
-                }}
+                className="px-4 py-2 text-sm text-muted-foreground hover:text-foreground transition-colors duration-300 rounded-lg hover:bg-white/[0.04]"
               >
                 {link.name}
               </Link>
             ))}
-            <Button 
-                onClick={() => {
-                    handleApiAccess();
-                    setIsMobileMenuOpen(false);
-                }}
-                className="bg-white text-black hover:bg-white/90 rounded-full w-full py-6 text-lg font-semibold"
+          </nav>
+
+          <div className="hidden md:flex items-center space-x-3">
+            <Link
+              href="#"
+              className="px-5 py-2 text-sm font-medium text-foreground/80 hover:text-foreground transition-colors duration-300"
+            >
+              Sign in
+            </Link>
+            <Link
+              href="#"
+              className="px-5 py-2.5 text-sm font-semibold rounded-xl bg-gradient-to-r from-[oklch(0.72_0.08_85)] to-[oklch(0.82_0.06_90)] text-background hover:opacity-90 transition-opacity duration-300"
             >
               Get API Access
-            </Button>
+            </Link>
+          </div>
+
+          <button
+            className="md:hidden text-foreground p-2"
+            onClick={() => setIsMobileOpen(!isMobileOpen)}
+            aria-label="Toggle menu"
+          >
+            {isMobileOpen ? <X size={22} /> : <Menu size={22} />}
+          </button>
+        </div>
+      </motion.header>
+
+      <AnimatePresence>
+        {isMobileOpen && (
+          <motion.div
+            initial={{ opacity: 0, y: -10 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0, y: -10 }}
+            transition={{ duration: 0.3 }}
+            className="fixed inset-0 z-40 bg-background/95 backdrop-blur-2xl pt-24 px-6 md:hidden"
+          >
+            <nav className="flex flex-col space-y-2">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  href={link.href}
+                  onClick={() => setIsMobileOpen(false)}
+                  className="text-lg font-medium text-foreground/80 hover:text-foreground py-3 border-b border-white/[0.06] transition-colors"
+                >
+                  {link.name}
+                </Link>
+              ))}
+              <div className="pt-6 space-y-3">
+                <Link
+                  href="#"
+                  className="block w-full text-center py-3 text-sm font-medium text-foreground/80 border border-white/[0.08] rounded-xl"
+                >
+                  Sign in
+                </Link>
+                <Link
+                  href="#"
+                  className="block w-full text-center py-3 text-sm font-semibold rounded-xl bg-gradient-to-r from-[oklch(0.72_0.08_85)] to-[oklch(0.82_0.06_90)] text-background"
+                >
+                  Get API Access
+                </Link>
+              </div>
+            </nav>
           </motion.div>
         )}
       </AnimatePresence>
-    </nav>
+    </>
   );
 }

@@ -2,90 +2,101 @@
 
 import React from "react";
 import { motion } from "framer-motion";
-import { Shield, Brain, MessageSquare, Zap, Lock, Globe, BarChart3, Languages, Bot } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Shield, Brain, MessageSquare, Lock, BarChart3, Globe } from "lucide-react";
 
 const features = [
   {
-    icon: <Shield className="text-primary" />,
-    title: "AI Moderation Engine",
-    description: "Multi-layered toxicity detection that understands nuance, sarcasm, and intent in real-time."
+    icon: Shield,
+    title: "Moderation Engine",
+    description: "Multi-layered content analysis that understands nuance, context, and intent — not just keywords.",
   },
   {
-    icon: <Brain className="text-blue-400" />,
-    title: "Contextual Memory",
-    description: "Our API remembers the flow of conversation, allowing for deep, long-form community engagement."
+    icon: Brain,
+    title: "Conversation Intelligence",
+    description: "Deep contextual awareness that tracks conversation flow across sessions and participants.",
   },
   {
-    icon: <Bot className="text-cyan-400" />,
-    title: "Auto Reply Suggestions",
-    description: "Context-aware response candidates that help users express themselves faster and better."
+    icon: MessageSquare,
+    title: "Smart Responses",
+    description: "Context-aware reply suggestions that help users express themselves with clarity and confidence.",
   },
   {
-    icon: <Lock className="text-purple-400" />,
-    title: "Spam & Scam Protection",
-    description: "Advanced pattern recognition to block crypto scams, phishing links, and bot armies."
+    icon: Lock,
+    title: "Safety & Compliance",
+    description: "Enterprise-grade protection against spam, scams, and abuse. GDPR, SOC2, and CCPA compliant.",
   },
   {
-    icon: <BarChart3 className="text-orange-400" />,
+    icon: BarChart3,
     title: "Real-time Analytics",
-    description: "Visual dashboards showing engagement trends, sentiment shifts, and moderation efficiency."
+    description: "Live dashboards showing engagement trends, sentiment shifts, and moderation effectiveness.",
   },
   {
-    icon: <Languages className="text-emerald-400" />,
-    title: "Multi-language Support",
-    description: "Seamlessly moderate and analyze conversations across 50+ languages with native accuracy."
-  }
+    icon: Globe,
+    title: "Global Scale",
+    description: "Edge-optimized infrastructure processing millions of messages with sub-50ms latency worldwide.",
+  },
 ];
 
 export function Features() {
   return (
-    <section id="product" className="py-24 bg-background relative">
+    <section id="product" className="py-32 relative">
       <div className="container mx-auto px-6">
-        <div className="text-center max-w-3xl mx-auto mb-20">
-          <motion.h2 
-            initial={{ opacity: 0, y: 20 }}
+        <div className="text-center max-w-2xl mx-auto mb-20">
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
             whileInView={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5 }}
             viewport={{ once: true }}
-            className="text-4xl md:text-5xl font-bold tracking-tighter mb-6"
+            className="text-xs font-medium uppercase tracking-[0.2em] text-gold mb-4"
           >
-            Everything you need for <span className="text-primary-gradient">smarter chat.</span>
-          </motion.h2>
-          <motion.p 
+            Product
+          </motion.p>
+          <motion.h2
             initial={{ opacity: 0, y: 20 }}
             whileInView={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.1 }}
+            transition={{ duration: 0.6, delay: 0.1 }}
             viewport={{ once: true }}
-            className="text-lg text-muted-foreground"
+            className="text-4xl md:text-5xl font-bold tracking-tight mb-6 font-[family-name:var(--font-heading)]"
           >
-            One API call to solve the biggest challenges in modern communication.
-            Safe, scalable, and intelligent by default.
+            <span className="text-ivory-gradient">Everything you need.</span>
+            <br />
+            <span className="text-foreground/40">Nothing you don&apos;t.</span>
+          </motion.h2>
+          <motion.p
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+            viewport={{ once: true }}
+            className="text-muted-foreground leading-relaxed"
+          >
+            One API. Six pillars of conversation intelligence. Built for platforms that demand reliability.
           </motion.p>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
           {features.map((feature, index) => (
             <motion.div
               key={feature.title}
-              initial={{ opacity: 0, y: 20 }}
+              initial={{ opacity: 0, y: 24 }}
               whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              transition={{ duration: 0.5, delay: index * 0.08, ease: [0.16, 1, 0.3, 1] }}
               viewport={{ once: true }}
-              whileHover={{ y: -5 }}
             >
-              <Card className="p-8 h-full bg-white/5 border-white/10 hover:border-primary/50 hover:bg-white/[0.07] transition-all duration-300 group relative overflow-hidden">
-                <div className="absolute top-0 right-0 p-4 opacity-0 group-hover:opacity-100 transition-opacity">
-                  <Zap className="w-4 h-4 text-primary animate-pulse" />
+              <div className="group relative h-full p-8 rounded-2xl bg-white/[0.02] border border-white/[0.06] hover:border-white/[0.1] hover:bg-white/[0.04] transition-all duration-500">
+                <div className="w-11 h-11 rounded-xl bg-white/[0.04] border border-white/[0.06] flex items-center justify-center mb-6 group-hover:border-gold/20 transition-colors duration-500">
+                  <feature.icon
+                    size={20}
+                    className="text-foreground/40 group-hover:text-gold transition-colors duration-500"
+                    strokeWidth={1.5}
+                  />
                 </div>
-                <div className="w-12 h-12 rounded-2xl bg-white/5 flex items-center justify-center mb-6 border border-white/10 group-hover:border-primary/30 group-hover:bg-primary/5 transition-colors">
-                  {React.cloneElement(feature.icon as React.ReactElement<any>, { size: 24 })}
-                </div>
-                <h3 className="text-xl font-bold text-white mb-3">{feature.title}</h3>
-                <p className="text-muted-foreground leading-relaxed">
+                <h3 className="text-lg font-semibold text-foreground mb-3 font-[family-name:var(--font-heading)]">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-muted-foreground leading-relaxed">
                   {feature.description}
                 </p>
-              </Card>
+              </div>
             </motion.div>
           ))}
         </div>

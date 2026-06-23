@@ -4,29 +4,35 @@ import React from "react";
 import { motion } from "framer-motion";
 
 const brands = [
-  "Meta", "Snapchat", "Discord", "Reddit", "Shopify", "Telegram", "Slack", "Twitch"
+  "Discord", "Shopify", "Linear", "Vercel", "Stripe", "Notion", "Figma", "Raycast",
 ];
 
 export function SocialProof() {
   return (
-    <section className="py-20 bg-background relative overflow-hidden">
+    <section className="py-16 border-y border-white/[0.04]">
       <div className="container mx-auto px-6">
-        <p className="text-center text-sm font-semibold uppercase tracking-widest text-muted-foreground mb-12">
-          Powering conversations for the world&apos;s most innovative platforms
-        </p>
-        
-        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24 grayscale opacity-50 hover:grayscale-0 hover:opacity-100 transition-all duration-700">
-          {brands.map((brand, index) => (
-            <motion.div
+        <motion.p
+          initial={{ opacity: 0 }}
+          whileInView={{ opacity: 1 }}
+          transition={{ duration: 0.6 }}
+          viewport={{ once: true }}
+          className="text-center text-xs font-medium uppercase tracking-[0.2em] text-muted-foreground/60 mb-10"
+        >
+          Trusted by teams building the future of communication
+        </motion.p>
+
+        <div className="flex flex-wrap justify-center items-center gap-x-12 gap-y-6">
+          {brands.map((brand, i) => (
+            <motion.span
               key={brand}
-              initial={{ opacity: 0, y: 20 }}
-              whileInView={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.5, delay: index * 0.1 }}
+              initial={{ opacity: 0 }}
+              whileInView={{ opacity: 1 }}
+              transition={{ duration: 0.5, delay: i * 0.05 }}
               viewport={{ once: true }}
-              className="text-2xl md:text-3xl font-black tracking-tighter text-white/40 hover:text-white transition-colors cursor-default"
+              className="text-lg font-semibold tracking-tight text-foreground/[0.15] hover:text-foreground/40 transition-colors duration-500 cursor-default font-[family-name:var(--font-heading)]"
             >
               {brand}
-            </motion.div>
+            </motion.span>
           ))}
         </div>
       </div>
