@@ -33,7 +33,7 @@ function deserializeSession(stored: StoredSession): SessionData {
 }
 
 export function useSessionPersistence() {
-  const debounceRef = useRef<ReturnType<typeof setTimeout>>();
+  const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const save = useCallback((session: SessionData) => {
     if (debounceRef.current) clearTimeout(debounceRef.current);

@@ -209,7 +209,7 @@ export interface FullAnalysis {
   suggestion: string;
   contextualSummary: string;
   flagged: boolean;
-  sentiment: { score: number; label: string };
+  sentiment: SentimentResult;
   smart_replies: string[];
   latencyMs: number;
 }
@@ -232,8 +232,8 @@ export function buildFullAnalysis(
     profanity: mod.flagged.some((w) => ["trash", "worst"].includes(w)) ? mod.toxicity / 200 : 0,
     identity_attack: 0,
     action: mod.action,
-    suggestion: mod.suggestion,
-    contextualSummary: mod.contextualSummary,
+    suggestion: mod.suggestion ?? "",
+    contextualSummary: mod.contextualSummary ?? "",
     flagged: mod.action !== "allow",
     sentiment,
     smart_replies: smartReplies.map((r) => r.text),

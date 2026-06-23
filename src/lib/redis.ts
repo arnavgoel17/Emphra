@@ -1,46 +1,107 @@
-import { Redis } from "@upstash/redis";
-import { Ratelimit } from "@upstash/ratelimit";
-import { env } from "./env";
+/**
+ * In-memory rate limiter and cache — zero external dependencies, zero cost.
+ * Works perfectly for single-instance deployments (Vercel, Node, etc.).
+ */
 
-export const redis = new Redis({
-  url: env.UPSTASH_REDIS_REST_URL,
-  token: env.UPSTASH_REDIS_REST_TOKEN,
-});
+// ── Rate Limiter ────────────────────────────────────────────────────────────
+
+interface RateLimitEntry {
+  count: number;
+  resetAt: number;
+}
+
+const rateLimitStore = new Map<string, RateLimitEntry>();
+
+// Cleanup expired entries every 60s to prevent memory leaks
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of rateLimitStore) {
+    if (now >= entry.resetAt) rateLimitStore.delete(key);
+  }
+}, 60_000);
+
+export interface RateLimitResult {
+  success: boolean;
+  limit: number;
+  reset: number;
+  remaining: number;
+}
 
 /**
- * Rate limiter for the moderation API
- * Allows 10 requests per 10 seconds per IP
+ * Sliding-window rate limiter.
+ * Allows `maxRequests` per `windowMs` milliseconds per key.
  */
-export const ratelimit = new Ratelimit({
-  redis: redis,
-  limiter: Ratelimit.slidingWindow(10, "10 s"),
-  analytics: true,
-  prefix: "ratelimit",
-});
+export function createRateLimiter(maxRequests: number, windowMs: number) {
+  return {
+    async limit(key: string): Promise<RateLimitResult> {
+      const now = Date.now();
+      const entry = rateLimitStore.get(key);
 
-/**
- * Normalizes text for better cache hit rates
- */
+      if (!entry || now >= entry.resetAt) {
+        // New window
+        rateLimitStore.set(key, { count: 1, resetAt: now + windowMs });
+        return {
+          success: true,
+          limit: maxRequests,
+          reset: now + windowMs,
+          remaining: maxRequests - 1,
+        };
+      }
+
+      // Existing window
+      const success = entry.count < maxRequests;
+      if (success) entry.count++;
+
+      return {
+        success,
+        limit: maxRequests,
+        reset: entry.resetAt,
+        remaining: Math.max(0, maxRequests - entry.count),
+      };
+    },
+  };
+}
+
+/** Default rate limiter: 10 requests per 10 seconds per IP */
+export const ratelimit = createRateLimiter(10, 10_000);
+
+// ── Simple In-Memory Cache ──────────────────────────────────────────────────
+
+interface CacheEntry {
+  value: unknown;
+  expiresAt: number;
+}
+
+const cacheStore = new Map<string, CacheEntry>();
+
+// Cleanup expired cache entries every 5 minutes
+setInterval(() => {
+  const now = Date.now();
+  for (const [key, entry] of cacheStore) {
+    if (now >= entry.expiresAt) cacheStore.delete(key);
+  }
+}, 300_000);
+
 export function normalizeText(text: string): string {
   return text
     .toLowerCase()
     .trim()
-    .replace(/[^\w\s]/gi, "") // Remove punctuation
-    .replace(/\s+/g, " ");   // Collapse whitespace
+    .replace(/[^\w\s]/gi, "")
+    .replace(/\s+/g, " ");
 }
 
-/**
- * Gets a moderation result from the global cache
- */
 export async function getCachedModeration(text: string) {
   const key = `mod:${normalizeText(text)}`;
-  return await redis.get(key);
+  const entry = cacheStore.get(key);
+  if (!entry) return null;
+  if (Date.now() >= entry.expiresAt) {
+    cacheStore.delete(key);
+    return null;
+  }
+  return entry.value;
 }
 
-/**
- * Sets a moderation result in the global cache with a 24h TTL
- */
-export async function setCachedModeration(text: string, result: any) {
+export async function setCachedModeration(text: string, result: unknown) {
   const key = `mod:${normalizeText(text)}`;
-  await redis.set(key, result, { ex: 86400 });
+  cacheStore.set(key, { value: result, expiresAt: Date.now() + 86400_000 }); // 24h TTL
 }

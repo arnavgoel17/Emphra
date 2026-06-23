@@ -175,9 +175,9 @@ export function usePlayground() {
             },
             sentiment: {
               score: fallback.sentiment.score,
-              label: fallback.sentiment.label,
+              label: fallback.sentiment.label as "Positive" | "Neutral" | "Negative" | "Angry" | "Excited" | "Frustrated",
             },
-            smartReplies: fallback.smartReplies.map((t) => ({ text: t })),
+            smartReplies: fallback.smart_replies.map((t) => ({ text: t })),
             contextualSummary: fallback.contextualSummary,
             latencyMs: fallback.latencyMs,
             timestamp: new Date(),
