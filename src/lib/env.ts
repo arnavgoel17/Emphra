@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 const envSchema = z.object({
-  PERSPECTIVE_API_KEY: z.string().min(1, "Perspective API Key is required"),
-  QWEN_API_KEY: z.string().min(1, "OpenRouter (Qwen) API Key is required"),
-  UPSTASH_REDIS_REST_URL: z.string().url("Upstash Redis URL must be a valid URL"),
-  UPSTASH_REDIS_REST_TOKEN: z.string().min(1, "Upstash Redis Token is required"),
+  PERSPECTIVE_API_KEY: z.string().default(""),
+  QWEN_API_KEY: z.string().default(""),
+  UPSTASH_REDIS_REST_URL: z.string().default(""),
+  UPSTASH_REDIS_REST_TOKEN: z.string().default(""),
   NODE_ENV: z.enum(["development", "test", "production"]).default("development"),
 });
 
