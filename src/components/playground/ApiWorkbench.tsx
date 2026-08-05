@@ -122,16 +122,14 @@ export function ApiWorkbench({ moderation, sentiment, replies, summary, history,
                 </div>
 
                 <div>
-                <p className="text-xs text-muted-foreground uppercase font-bold mb-2">Flagged Keywords</p>
+                <p className="text-xs text-muted-foreground uppercase font-bold mb-2">Status</p>
                 <div className="flex flex-wrap gap-2">
-                    {moderation?.flagged.length ? (
-                    moderation.flagged.map(word => (
-                        <Badge key={word} variant="outline" className="border-red-500/30 bg-red-500/10 text-red-400">
-                        {word}
-                        </Badge>
-                    ))
+                    {moderation?.flagged ? (
+                    <Badge variant="outline" className="border-red-500/30 bg-red-500/10 text-red-400">
+                        Content flagged - review required
+                    </Badge>
                     ) : (
-                    <span className="text-sm text-muted-foreground italic">No keywords flagged</span>
+                    <span className="text-sm text-muted-foreground italic">No issues detected</span>
                     )}
                 </div>
                 </div>

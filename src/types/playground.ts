@@ -112,6 +112,7 @@ export interface SessionData {
   insights: Insight[];
   settings: PlaygroundSettings;
   activeScenario: string | null;
+  ersScore: number;
 }
 
 export type ExportFormat = "json" | "report";

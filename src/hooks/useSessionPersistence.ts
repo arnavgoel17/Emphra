@@ -1,8 +1,13 @@
 import { useCallback, useRef } from "react";
 import type { SessionData, PlaygroundMessage } from "@/types/playground";
 
+// Use sessionStorage instead of localStorage - automatically cleared on tab close or page refresh
 const STORAGE_KEY = "emphra-playground-session";
-const SESSION_TTL = 24 * 60 * 60 * 1000; // 24 hours
+
+// Force clear sessionStorage on module load to ensure no cache persists across refreshes
+try {
+  sessionStorage.removeItem(STORAGE_KEY);
+} catch {}
 
 interface StoredSession {
   data: SessionData;
@@ -40,7 +45,7 @@ export function useSessionPersistence() {
     debounceRef.current = setTimeout(() => {
       try {
         const storable = serializeSession(session);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(storable));
+        sessionStorage.setItem(STORAGE_KEY, JSON.stringify(storable));
       } catch {
         // Storage full or unavailable — silent fail
       }
@@ -49,13 +54,9 @@ export function useSessionPersistence() {
 
   const load = useCallback((): SessionData | null => {
     try {
-      const raw = localStorage.getItem(STORAGE_KEY);
+      const raw = sessionStorage.getItem(STORAGE_KEY);
       if (!raw) return null;
       const stored: StoredSession = JSON.parse(raw);
-      if (Date.now() - stored.savedAt > SESSION_TTL) {
-        localStorage.removeItem(STORAGE_KEY);
-        return null;
-      }
       return deserializeSession(stored);
     } catch {
       return null;
@@ -63,7 +64,13 @@ export function useSessionPersistence() {
   }, []);
 
   const clear = useCallback(() => {
-    localStorage.removeItem(STORAGE_KEY);
+    // Cancel any pending save to avoid re-saving after clearing
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    try {
+      sessionStorage.removeItem(STORAGE_KEY);
+    } catch {
+      // Storage unavailable — silent fail
+    }
   }, []);
 
   return { save, load, clear };

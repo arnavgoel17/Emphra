@@ -59,7 +59,7 @@ export function AnalyticsSection({ analytics }: AnalyticsSectionProps) {
 
       <div className="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-4 gap-3">
         {/* Chart 1: Toxicity Trend */}
-        <div className="p-3 rounded-xl bg-card/50 border border-white/[0.06]">
+        <div className="p-3 rounded-xl" style={{ backdropFilter:"blur(24px) saturate(160%)", WebkitBackdropFilter:"blur(24px) saturate(160%)", background:"linear-gradient(145deg,rgba(255,255,255,0.04) 0%,rgba(255,255,255,0.015) 100%)", boxShadow:"0 0 0 0.5px rgba(255,255,255,0.09),inset 0 1px 0 rgba(255,255,255,0.11),0 4px 20px rgba(0,0,0,0.22)" }}>
           <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/30 mb-2">
             Toxicity Trend
           </p>
@@ -87,7 +87,7 @@ export function AnalyticsSection({ analytics }: AnalyticsSectionProps) {
         </div>
 
         {/* Chart 2: Sentiment Trend */}
-        <div className="p-3 rounded-xl bg-card/50 border border-white/[0.06]">
+        <div className="p-3 rounded-xl" style={{ backdropFilter:"blur(24px) saturate(160%)", WebkitBackdropFilter:"blur(24px) saturate(160%)", background:"linear-gradient(145deg,rgba(255,255,255,0.04) 0%,rgba(255,255,255,0.015) 100%)", boxShadow:"0 0 0 0.5px rgba(255,255,255,0.09),inset 0 1px 0 rgba(255,255,255,0.11),0 4px 20px rgba(0,0,0,0.22)" }}>
           <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/30 mb-2">
             Sentiment Trend
           </p>
@@ -115,7 +115,7 @@ export function AnalyticsSection({ analytics }: AnalyticsSectionProps) {
         </div>
 
         {/* Chart 3: Conversation Health */}
-        <div className="p-3 rounded-xl bg-card/50 border border-white/[0.06]">
+        <div className="p-3 rounded-xl" style={{ backdropFilter:"blur(24px) saturate(160%)", WebkitBackdropFilter:"blur(24px) saturate(160%)", background:"linear-gradient(145deg,rgba(255,255,255,0.04) 0%,rgba(255,255,255,0.015) 100%)", boxShadow:"0 0 0 0.5px rgba(255,255,255,0.09),inset 0 1px 0 rgba(255,255,255,0.11),0 4px 20px rgba(0,0,0,0.22)" }}>
           <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/30 mb-2">
             Conversation Health
           </p>
@@ -152,7 +152,7 @@ export function AnalyticsSection({ analytics }: AnalyticsSectionProps) {
         </div>
 
         {/* Chart 4: Message Distribution */}
-        <div className="p-3 rounded-xl bg-card/50 border border-white/[0.06]">
+        <div className="p-3 rounded-xl" style={{ backdropFilter:"blur(24px) saturate(160%)", WebkitBackdropFilter:"blur(24px) saturate(160%)", background:"linear-gradient(145deg,rgba(255,255,255,0.04) 0%,rgba(255,255,255,0.015) 100%)", boxShadow:"0 0 0 0.5px rgba(255,255,255,0.09),inset 0 1px 0 rgba(255,255,255,0.11),0 4px 20px rgba(0,0,0,0.22)" }}>
           <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/30 mb-2">
             Message Distribution
           </p>

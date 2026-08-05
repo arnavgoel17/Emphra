@@ -93,14 +93,31 @@ export function ConversationSimulator({
   const handleKeyDown = (e: React.KeyboardEvent) => {
     if (e.key === "Enter" && !e.shiftKey) {
       e.preventDefault();
+      e.stopPropagation();
       handleSubmit(e);
     }
   };
 
   return (
-    <div className="flex flex-col h-full rounded-2xl overflow-hidden border border-white/[0.06] bg-card/50">
+    <div
+      className="flex flex-col h-full rounded-2xl overflow-hidden"
+      style={{
+        backdropFilter: "blur(32px) saturate(180%) brightness(1.06)",
+        WebkitBackdropFilter: "blur(32px) saturate(180%) brightness(1.06)",
+        background:
+          "linear-gradient(145deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.018) 50%, rgba(100,120,255,0.025) 100%)",
+        boxShadow:
+          "0 0 0 0.5px rgba(255,255,255,0.10), " +
+          "inset 0 1px 0 rgba(255,255,255,0.14), " +
+          "inset 0 -1px 0 rgba(0,0,0,0.12), " +
+          "0 8px 40px rgba(0,0,0,0.30)",
+      }}
+    >
       {/* Header */}
-      <div className="px-4 py-3 border-b border-white/[0.06] bg-white/[0.02] flex items-center justify-between shrink-0">
+      <div
+        className="px-4 py-3 flex items-center justify-between shrink-0"
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+      >
         <div className="flex items-center gap-2">
           <div className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse" />
           <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
@@ -138,7 +155,7 @@ export function ConversationSimulator({
                     duration: 0.35,
                     ease: [0.16, 1, 0.3, 1],
                   }}
-                  className={cn("flex flex-col", MESSAGE_ALIGN[msg.role])}
+                  className={cn("relative flex flex-col", MESSAGE_ALIGN[msg.role])}
                   onMouseEnter={() => setHoveredMessageId(msg.id)}
                   onMouseLeave={() => setHoveredMessageId(null)}
                 >
@@ -210,18 +227,32 @@ export function ConversationSimulator({
       </ScrollArea>
 
       {/* Input Area */}
-      <div className="px-4 py-3 border-t border-white/[0.06] bg-white/[0.01] space-y-2.5 shrink-0">
-        <form onSubmit={handleSubmit} className="flex gap-2">
+      <div
+        className="px-4 py-3 space-y-2.5 shrink-0"
+        style={{ borderTop: "1px solid rgba(255,255,255,0.06)" }}
+      >
+        <form className="flex gap-2" onSubmit={(e) => e.preventDefault()}>
           <Input
             value={input}
             onChange={(e) => setInput(e.target.value)}
             onKeyDown={handleKeyDown}
             placeholder="Type a message to analyze…"
-            className="bg-black/30 border-white/[0.06] text-foreground h-10 rounded-xl text-sm placeholder:text-muted-foreground/25 focus:ring-primary/20"
+            className="border-0 text-foreground h-10 rounded-xl text-sm placeholder:text-muted-foreground/25 focus:ring-primary/20"
+            style={{
+              background: "rgba(0,0,0,0.25)",
+              boxShadow: "inset 0 1px 0 rgba(255,255,255,0.05), 0 0 0 0.5px rgba(255,255,255,0.07)",
+            }}
             disabled={isProcessing}
           />
           <Button
-            type="submit"
+            type="button"
+            onClick={(e) => {
+              e.stopPropagation();
+              if (input.trim()) {
+                onSendMessage(input.trim());
+                setInput("");
+              }
+            }}
             size="icon"
             disabled={!input.trim() || isProcessing}
             className="h-10 w-10 bg-primary text-primary-foreground rounded-xl shrink-0 hover:bg-primary/90 disabled:opacity-30 transition-all"

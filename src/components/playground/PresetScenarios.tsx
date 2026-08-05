@@ -143,11 +143,18 @@ export function PresetScenarios({ activeScenario, onSelect }: PresetScenariosPro
               whileHover={{ scale: 1.03 }}
               whileTap={{ scale: 0.97 }}
               className={cn(
-                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all duration-200 border",
+                "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[10px] font-semibold transition-all duration-200",
                 isActive
-                  ? "bg-primary/15 text-primary border-primary/30 shadow-gold-sm"
-                  : "bg-white/[0.02] text-muted-foreground/60 border-white/[0.06] hover:bg-white/[0.05] hover:text-foreground/80 hover:border-white/[0.1]"
+                  ? "text-primary"
+                  : "text-muted-foreground/60 hover:text-foreground/80"
               )}
+              style={isActive ? {
+                background: "oklch(0.72 0.08 85 / 0.12)",
+                boxShadow: "0 0 0 0.5px oklch(0.72 0.08 85 / 0.30), inset 0 1px 0 rgba(255,255,255,0.08)",
+              } : {
+                background: "rgba(255,255,255,0.025)",
+                boxShadow: "0 0 0 0.5px rgba(255,255,255,0.07), inset 0 1px 0 rgba(255,255,255,0.05)",
+              }}
               aria-label={`Load scenario: ${scenario.name}`}
             >
               <Icon size={10} />

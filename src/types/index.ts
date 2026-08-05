@@ -2,7 +2,7 @@ export type Action = "allow" | "warn" | "block";
 
 export interface ModerationResult {
   toxicity: number;
-  flagged: string[];
+  flagged: boolean;
   action: Action;
   categories: string[];
   suggestion?: string;

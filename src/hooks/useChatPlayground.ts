@@ -1,5 +1,6 @@
 import { useState, useCallback } from "react";
 import { Message, ModerationResult, SentimentResult, SmartReply } from "@/types";
+import { generateHumanLikeResponse } from "@/lib/mock-api";
 import { toast } from "sonner";
 
 const INITIAL_MESSAGES: Message[] = [
@@ -11,14 +12,14 @@ export function useChatPlayground() {
   const [isTyping, setIsTyping] = useState(false);
   const [strictness, setStrictness] = useState<"Low" | "Medium" | "High">("Medium");
   const [enableModeration, setEnableModeration] = useState(true);
-  
+
   const [moderation, setModeration] = useState<ModerationResult | null>(null);
   const [sentiment, setSentiment] = useState<SentimentResult | null>(null);
   const [replies, setReplies] = useState<SmartReply[]>([]);
   const [summary, setSummary] = useState("Conversation hasn't started yet.");
   const [history, setHistory] = useState<{ toxicity: number; time: string }[]>([]);
   const [ersScore, setErsScore] = useState(100);
-  
+
   // Safety Popup State
   const [isSafetyOpen, setIsSafetyOpen] = useState(false);
   const [pendingMessage, setPendingMessage] = useState<string | null>(null);
@@ -28,30 +29,30 @@ export function useChatPlayground() {
     if (isUser) {
       try {
         const chatHistory = messages.map(m => ({ sender: m.isUser ? "User" : "Bot", text: m.text }));
-        
+
         // 1. Analyze with Moderation API
         const response = await fetch("/api/moderate", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-              text, 
+          body: JSON.stringify({
+              text,
               history: chatHistory
           })
         });
 
         if (!response.ok) throw new Error("API call failed");
-        
+
         const mod = await response.json();
-        
+
         setModeration({
             toxicity: mod.toxicity * 100,
-            flagged: mod.flagged ? ["toxic"] : [],
+            flagged: mod.action !== "allow",
             action: mod.action,
             categories: []
         });
 
         setHistory(prev => [...prev, { toxicity: mod.toxicity * 100, time: new Date().toLocaleTimeString() }].slice(-10));
-        
+
         // If blocked, open safety popup
         if (!forceSend && mod.action === "block" && enableModeration) {
             setPendingMessage(text);
@@ -59,28 +60,29 @@ export function useChatPlayground() {
             setIsSafetyOpen(true);
             return;
         }
-        
+
         if (forceSend) {
             setErsScore(prev => Math.max(0, prev - (mod.toxicity * 50)));
         }
 
         // 2. Generate Contextual Reply
         setIsTyping(true);
-        const botResponse = await fetch("/api/moderate", {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ 
-              mode: "chat",
-              text: text,
-              history: chatHistory
-          })
-        });
-        
-        if (!botResponse.ok) throw new Error("Bot reply failed");
-        
-        const botData = await botResponse.json();
+        let botReply: string;
+        try {
+          const botResponse = await fetch("/api/chat", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ text, history: chatHistory }),
+          });
+          if (!botResponse.ok) throw new Error("Bot reply failed");
+          const botData = (await botResponse.json()) as { reply?: string };
+          if (!botData.reply) throw new Error("empty reply");
+          botReply = botData.reply;
+        } catch {
+          botReply = generateHumanLikeResponse(text);
+        }
 
-        const newBotMsg: Message = { id: Math.random().toString(), text: botData.reply, isUser: false, timestamp: new Date() };
+        const newBotMsg: Message = { id: Math.random().toString(), text: botReply, isUser: false, timestamp: new Date() };
         setMessages(prev => [...prev, newBotMsg]);
         setIsTyping(false);
         setSummary(mod.contextualSummary);

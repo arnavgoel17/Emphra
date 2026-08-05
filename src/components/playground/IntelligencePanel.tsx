@@ -62,6 +62,7 @@ interface IntelligencePanelProps {
   };
   timeline: { index: number; preview: string; action: string; time: string }[];
   isProcessing: boolean;
+  ersScore: number;
 }
 
 export function IntelligencePanel({
@@ -74,6 +75,7 @@ export function IntelligencePanel({
   summary,
   timeline,
   isProcessing,
+  ersScore,
 }: IntelligencePanelProps) {
   const lastAnalysis =
     messages.length > 0
@@ -81,12 +83,28 @@ export function IntelligencePanel({
       : null;
 
   return (
-    <div className="flex flex-col h-full rounded-2xl overflow-hidden border border-white/[0.06] bg-card/50">
+    <div
+      className="flex flex-col h-full rounded-2xl overflow-hidden"
+      style={{
+        backdropFilter: "blur(32px) saturate(180%) brightness(1.06)",
+        WebkitBackdropFilter: "blur(32px) saturate(180%) brightness(1.06)",
+        background:
+          "linear-gradient(145deg, rgba(255,255,255,0.045) 0%, rgba(255,255,255,0.018) 50%, rgba(180,160,255,0.025) 100%)",
+        boxShadow:
+          "0 0 0 0.5px rgba(255,255,255,0.10), " +
+          "inset 0 1px 0 rgba(255,255,255,0.14), " +
+          "inset 0 -1px 0 rgba(0,0,0,0.12), " +
+          "0 8px 40px rgba(0,0,0,0.30)",
+      }}
+    >
       {/* Tab Bar */}
-      <div className="border-b border-white/[0.06] bg-white/[0.02] shrink-0">
+      <div
+        className="shrink-0"
+        style={{ borderBottom: "1px solid rgba(255,255,255,0.07)" }}
+      >
         <Tabs value={activeTab} onValueChange={(v) => onTabChange(v as TabId)}>
           <div className="px-2 pt-2">
-            <TabsList className="bg-transparent h-8 gap-0.5 p-0 w-full justify-start overflow-x-auto">
+            <TabsList className="bg-transparent h-8 gap-0.5 p-0 w-full justify-start">
               {TABS.map((tab) => (
                 <TabsTrigger
                   key={tab.id}
@@ -108,6 +126,7 @@ export function IntelligencePanel({
                   analysis={lastAnalysis}
                   analytics={analytics}
                   isProcessing={isProcessing}
+                  ersScore={ersScore}
                 />
               </TabsContent>
 

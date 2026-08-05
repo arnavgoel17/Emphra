@@ -3,9 +3,10 @@ import { ratelimit } from "@/lib/redis";
 import {
   buildFullAnalysis,
   generateHumanLikeResponse,
+  moderateContent,
 } from "@/lib/mock-api";
-
-export const runtime = "edge";
+import { analyzeToxicityDetoxify } from "@/lib/detoxify";
+import { analyzeToxicity } from "@/lib/perspective";
 
 interface ChatMessage {
   sender: string;
@@ -17,6 +18,30 @@ interface ModerationRequestBody {
   history?: ChatMessage[];
   mode?: "moderate" | "chat";
   strictness?: number | "Low" | "Medium" | "High";
+}
+
+/**
+ * Try Detoxify first (if API key available), then Perspective, then mock fallback
+ */
+async function scoreToxicity(text: string): Promise<{
+  toxicity: number;
+  source: "detoxify" | "perspective" | "mock";
+}> {
+  // Try Detoxify if HF_API_KEY is available
+  try {
+    const result = await analyzeToxicityDetoxify(text);
+    return { toxicity: result.toxicity, source: "detoxify" };
+  } catch {
+    // Try Perspective API as fallback
+    try {
+      const result = await analyzeToxicity(text);
+      return { toxicity: result.toxicity, source: "perspective" };
+    } catch {
+      // Fall back to mock engine
+      const mock = moderateContent(text);
+      return { toxicity: mock.toxicity / 100, source: "mock" };
+    }
+  }
 }
 
 export async function POST(req: Request) {
@@ -54,9 +79,17 @@ export async function POST(req: Request) {
     }
 
     // ── Moderation Mode ────────────────────────────────────────────────
-    const result = buildFullAnalysis(text, history, strictness);
+    const { toxicity, source } = await scoreToxicity(text);
 
-    return NextResponse.json(result);
+    // Build full analysis with toxicity from primary source
+    const fallback = buildFullAnalysis(text, history, strictness);
+
+    return NextResponse.json({
+      ...fallback,
+      toxicity,
+      action: fallback.action,
+      source,
+    });
   } catch (error) {
     console.error("Moderation Error:", error);
     return NextResponse.json(

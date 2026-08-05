@@ -24,6 +24,7 @@ interface ModerationTabProps {
   analysis: AnalysisResult | null | undefined;
   analytics: AnalyticsDataPoint[];
   isProcessing: boolean;
+  ersScore: number;
 }
 
 const CATEGORIES = [
@@ -76,14 +77,14 @@ export function ModerationTab({
   analysis,
   analytics,
   isProcessing,
+  ersScore,
 }: ModerationTabProps) {
   const scores = analysis?.moderation.scores;
   const action = analysis?.moderation.action ?? "allow";
   const badge = getActionBadge(action);
   const trend = getRiskTrend(analytics);
-  const overallScore = scores
-    ? Math.round(scores.toxicity * 100)
-    : 0;
+  // Use ersScore for the overall score display (0 = safe, 100 = high risk)
+  const overallScore = ersScore;
 
   const sparklineData = analytics.map((d, i) => ({
     i,
@@ -199,7 +200,13 @@ export function ModerationTab({
       </div>
 
       {/* Risk Trend */}
-      <div className="flex items-center justify-between p-2.5 rounded-lg bg-white/[0.02] border border-white/[0.04]">
+      <div
+        className="flex items-center justify-between p-2.5 rounded-lg"
+        style={{
+          background: "rgba(255,255,255,0.03)",
+          boxShadow: "0 0 0 0.5px rgba(255,255,255,0.07), inset 0 1px 0 rgba(255,255,255,0.06)",
+        }}
+      >
         <div className="flex items-center gap-2">
           {trend === "worsening" ? (
             <TrendingUp size={11} className="text-red-400" />
@@ -268,7 +275,13 @@ export function ModerationTab({
 
       {/* Suggestion */}
       {analysis?.moderation.suggestion && (
-        <div className="p-2.5 rounded-lg bg-primary/[0.04] border border-primary/10">
+        <div
+          className="p-2.5 rounded-lg"
+          style={{
+            background: "oklch(0.72 0.08 85 / 0.05)",
+            boxShadow: "0 0 0 0.5px oklch(0.72 0.08 85 / 0.15), inset 0 1px 0 rgba(255,255,255,0.06)",
+          }}
+        >
           <p className="text-[9px] font-bold uppercase tracking-widest text-primary/50 mb-1">
             Suggestion
           </p>

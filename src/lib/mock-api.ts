@@ -61,7 +61,7 @@ export function moderateContent(
 
   return {
     toxicity: Math.min(toxicity, 100),
-    flagged,
+    flagged: flagged.length > 0,
     action,
     categories,
     suggestion,
@@ -220,24 +220,63 @@ export function buildFullAnalysis(
   strictness: number | "Low" | "Medium" | "High" = "Medium"
 ): FullAnalysis {
   const start = Date.now();
-  const mod = moderateContent(text, strictness);
+  const lowercase = text.toLowerCase();
+  const flagged = TOXIC_KEYWORDS.filter((word) => lowercase.includes(word));
+
+  let toxicity = flagged.length * 25;
+  if (text === text.toUpperCase() && text.length > 5) toxicity += 10;
+  if (toxicity > 100) toxicity = 100;
+
+  let threshold = 50;
+  if (typeof strictness === "string") {
+    threshold = strictness === "Low" ? 70 : strictness === "Medium" ? 40 : 20;
+  } else {
+    threshold = strictness;
+  }
+
+  let action: Action = "allow";
+  if (toxicity >= threshold) {
+    action = toxicity >= 80 ? "block" : "warn";
+  }
+
+  const categories: string[] = [];
+  if (flagged.some((w) => ["kill", "die"].includes(w))) categories.push("violence");
+  if (flagged.some((w) => ["idiot", "stupid", "dumb", "moron"].includes(w))) categories.push("harassment");
+
+  const triggerWord = flagged.find((w) => SAFE_SUGGESTIONS[w]);
+  const suggestion = triggerWord
+    ? SAFE_SUGGESTIONS[triggerWord]
+    : "Could you rephrase that in a way that helps us move forward?";
+
   const sentiment = analyzeSentiment(text);
   const smartReplies = generateSmartReplies(text);
-  const _history = history; // used for context in future enhancements
+
+  // Simulate realistic processing latency (mock is synchronous otherwise → 0ms)
+  const simulatedLatency = 30 + Math.floor(Math.random() * 80); // 30–110ms
+
+  // Derive sub-scores from flagged array
+  const hasInsult = flagged.some((w) => ["idiot", "stupid", "dumb", "moron"].includes(w));
+  const hasThreat = flagged.some((w) => ["kill", "die"].includes(w));
+  const hasProfanity = flagged.some((w) => ["trash", "worst"].includes(w));
 
   return {
-    toxicity: mod.toxicity / 100,
-    insult: mod.flagged.some((w) => ["idiot", "stupid", "dumb", "moron"].includes(w)) ? mod.toxicity / 100 : 0,
-    threat: mod.flagged.some((w) => ["kill", "die"].includes(w)) ? mod.toxicity / 100 : 0,
-    profanity: mod.flagged.some((w) => ["trash", "worst"].includes(w)) ? mod.toxicity / 200 : 0,
+    toxicity: toxicity / 100,
+    insult: hasInsult ? toxicity / 100 : 0,
+    threat: hasThreat ? toxicity / 100 : 0,
+    profanity: hasProfanity ? toxicity / 200 : 0,
     identity_attack: 0,
-    action: mod.action,
-    suggestion: mod.suggestion ?? "",
-    contextualSummary: mod.contextualSummary ?? "",
-    flagged: mod.action !== "allow",
+    action,
+    suggestion,
+    contextualSummary:
+      action === "allow"
+        ? "Everything looks clean."
+        : action === "block"
+          ? "Message blocked — high toxicity detected."
+          : "Potential community guideline violation detected.",
+    flagged: action !== "allow",
     sentiment,
     smart_replies: smartReplies.map((r) => r.text),
-    latencyMs: Date.now() - start,
+    latencyMs: simulatedLatency,
   };
 }
 

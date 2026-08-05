@@ -19,8 +19,7 @@ const TOXIC_EXAMPLES = [
   "You are such an idiot, I hate you!",
   "Buy this crypto scam now for free money!",
   "I'm going to kill your account if you don't stop.",
-  "This service is absolute trash, worst experience ever.",
-  "I am so excited to use this new API, it looks great!"
+  "This service is absolute trash, worst experience ever."
 ];
 
 export function PlaygroundContainer() {

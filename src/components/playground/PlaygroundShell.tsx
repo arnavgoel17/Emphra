@@ -8,6 +8,7 @@ import { ConversationSimulator } from "./ConversationSimulator";
 import { IntelligencePanel } from "./IntelligencePanel";
 import { AnalyticsSection } from "./AnalyticsSection";
 import { ExportModal } from "./ExportModal";
+import { SafetyDialog } from "./SafetyDialog";
 import { SCENARIOS } from "./PresetScenarios";
 import type { ExportFormat } from "@/types/playground";
 
@@ -23,11 +24,22 @@ export function PlaygroundShell() {
     insights,
     summary,
     timeline,
+    activeScenario,
     sendMessage,
+    handleSafetyConfirm,
     loadScenario,
     resetSession,
+    clearSession,
     exportSessionData,
     exportReportData,
+    safetyOpen,
+    setSafetyOpen,
+    pendingMessage,
+    pendingEdit,
+    setPendingEdit,
+    safetySuggestion,
+    isSafetyLoading,
+    ersScore,
   } = usePlayground();
 
   const [exportOpen, setExportOpen] = useState(false);
@@ -44,7 +56,7 @@ export function PlaygroundShell() {
     }
   }, [messages, analyses]);
 
-  // Load scenario from URL
+  // Load scenario from URL on mount only
   useEffect(() => {
     const params = new URLSearchParams(window.location.search);
     const scenarioId = params.get("scenario");
@@ -54,7 +66,8 @@ export function PlaygroundShell() {
         loadScenario(scenario);
       }
     }
-  }, [loadScenario]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   // Keyboard shortcuts
   useEffect(() => {
@@ -75,6 +88,8 @@ export function PlaygroundShell() {
     return () => window.removeEventListener("keydown", handler);
   }, [resetSession]);
 
+  // Clear session on manual reset (user clicks Reset button)
+
   const handleExport = useCallback(
     (format: ExportFormat) => {
       return format === "json" ? exportSessionData() : exportReportData();
@@ -89,6 +104,7 @@ export function PlaygroundShell() {
         latencyMs={latencyMs}
         messageCount={messages.length}
         isProcessing={isProcessing}
+        activeScenario={activeScenario}
         onReset={resetSession}
         onExport={() => setExportOpen(true)}
         onShare={() => {}}
@@ -110,7 +126,7 @@ export function PlaygroundShell() {
               analyses={analyses}
               isProcessing={isProcessing}
               processingStage={processingStage}
-              activeScenario={null}
+              activeScenario={activeScenario}
               onSendMessage={sendMessage}
               onLoadScenario={loadScenario}
               onReset={resetSession}
@@ -134,6 +150,7 @@ export function PlaygroundShell() {
               summary={summary}
               timeline={timeline}
               isProcessing={isProcessing}
+              ersScore={ersScore}
             />
           </motion.div>
         </div>
@@ -154,6 +171,18 @@ export function PlaygroundShell() {
         onOpenChange={setExportOpen}
         onExport={handleExport}
         messageCount={messages.length}
+      />
+
+      {/* Safety Interstitial Dialog */}
+      <SafetyDialog
+        open={safetyOpen}
+        onOpenChange={setSafetyOpen}
+        pendingMessage={pendingMessage}
+        pendingEdit={pendingEdit}
+        onPendingEditChange={setPendingEdit}
+        suggestion={safetySuggestion}
+        isLoading={isSafetyLoading}
+        onConfirm={handleSafetyConfirm}
       />
     </div>
   );
